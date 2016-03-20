@@ -1,0 +1,112 @@
+<App Theme="Native" Background="#FFF">
+    <JavaScript>
+        var Observable = require("FuseJS/Observable");
+        var initURL = "http://www.baidu.com";
+
+        var editURL = Observable(initURL);
+        var currentURL = Observable(initURL);
+        var history=[initURL];
+        var cuttentHistoryIndex = 0 ;
+
+        module.exports = {
+            editURL        : editURL,
+            currentURL    : currentURL,
+            onGoButton    : function() { 
+                var url = editURL.value.toLowerCase();
+                if(url.indexOf("http://")!=0){
+                    url = "http://"+url;
+                }
+                currentURL.value = url;
+                history = history.slice(0,cuttentHistoryIndex);
+                history.push(url);
+                cuttentHistoryIndex = history.length-1;
+            },
+            onReloadButton: function(){
+
+            },
+            onPageLoaded: function(obj) {
+                var url =  JSON.parse(obj.json).url;
+                editURL.value = url;
+                if( history[cuttentHistoryIndex]!=url ){
+                    history.push(url);
+                    cuttentHistoryIndex++;
+                }
+            },
+            goBack:function(){
+                var index = cuttentHistoryIndex-1;
+                if(index >=0 && history.length >index ){
+                    currentURL.value = history[index];
+                    cuttentHistoryIndex = index;
+                }
+            },
+            goForward:function(){
+                var index = cuttentHistoryIndex+1;
+                if(index >=0 && history.length >index ){
+                    currentURL.value = history[index];
+                    cuttentHistoryIndex = index;
+                }
+            }
+        };
+    </JavaScript>
+    <DockPanel Background="#FFF">
+        <StackPanel Dock="Top">
+            <StatusBarBackground/>
+            <DockPanel>
+                <TextInput Value="{editURL}" InputHint="URL" IsMultiline="false" Dock="Fill" ActionStyle="Go">
+                    <TextInputActionTriggered>
+                         <Callback Handler="{onGoButton}" />
+                         <ReleaseFocus/>
+                    </TextInputActionTriggered>
+                </TextInput>
+                <Panel  DockPanel.Dock="Right" Margin="10" Height="24">
+                    <Image File="Assets/icon-reload.png" Margin="0">
+                        <Clicked>
+                            <Reload TargetNode="mainWebView"/>
+                            <Rotate Degrees="360" Duration="0.3"/>
+                        </Clicked>
+                    </Image>
+                    <Circle Layer="Background">
+                        <SolidColor ux:Name="cameraButtonColor" Color="#FC3768" />
+                        <DropShadow />
+                    </Circle>
+                </Panel>
+            </DockPanel>
+        </StackPanel>
+        <WebView ux:Name="mainWebView" Url="{currentURL}" Dock="Fill">
+            <PageBeginLoading>
+                <!-- <Change Target="reloadButton.IsEnabled" Value="false"></Change> -->
+                <Scale Factor="0.9" Duration="0.2" Easing="BackOut"></Scale>
+            </PageBeginLoading>
+            <WhilePageLoading>
+                
+            </WhilePageLoading>
+            <PageLoaded>
+                <EvaluateJS Handler="{onPageLoaded}">
+                    var result = {
+                        url : document.location.href
+                    };
+                    return result;
+                </EvaluateJS>
+            </PageLoaded>
+        </WebView>
+        <SwipeGesture ux:Name="swipe" Direction="Right" Length="200" Type="Simple" />
+        <Swiped Source="swipe">
+            <Callback Handler="{goBack}" />
+        </Swiped>
+        <SwipingAnimation Source="swipe">
+            <Move X="100" />
+        </SwipingAnimation>
+
+
+        <SwipeGesture ux:Name="swipeLeft" Direction="Left" Length="200" Type="Simple" />
+        <Swiped Source="swipeLeft">
+            <Callback Handler="{goForward}" />
+        </Swiped>
+        <SwipingAnimation Source="swipeLeft">
+            <Move X="-100" />
+        </SwipingAnimation>
+        <OnBackButton>
+                <Callback Handler="{goBack}" />
+        </OnBackButton>
+    </DockPanel>
+</App>

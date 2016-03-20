@@ -1,0 +1,71 @@
+{
+	"Title": "X",
+	"Description":"a simple brwoser created by fuse.",
+	"Icon": "Assets/Icon.png",
+	"Version": "1.0.0",
+	"VersionCode": 1,
+	"BundleIdentifier": "me.fishg.x",
+	"Packages": [
+		"Fuse.Animations",
+		"Fuse.BasicTheme",
+		"Fuse.Controls",
+		"Fuse.Designer",
+		"Fuse.Drawing",
+		"Fuse.Drawing.Primitives",
+		"Fuse.Effects",
+		"Fuse.Elements",
+		"Fuse.Entities",
+		"Fuse.Gestures",
+		"Fuse.Navigation",
+		"Fuse.Reactive",
+		"Fuse.Shapes",
+		"Fuse.Triggers",
+		"FuseCore",
+		"Fuse.Desktop",
+		"Fuse.Android",
+		"Fuse.iOS"
+	],
+	"Includes": [
+		"Comfortable.ux:UXFile"
+	],
+	"Mobile": {
+	    "UriScheme": "http",
+	    "Orientations": "Auto",
+	},
+	"Android": {
+		"Key" : {
+		          "Alias" : "release",
+		          "AliasPassword" : "123456",
+		          "Store" : "release.keystore",
+		          "StorePassword" : "123456"
+		      },
+	  "ApplicationLabel": "$(Title)",
+	  "Description": "$(Description)",
+	  "Icons": {
+	    "LDPI": "$(Icon)",
+	    "MDPI": "$(Icon)",
+	    "HDPI": "$(Icon)",
+	    "XHDPI": "$(Icon)",
+	    "XXHDPI": "$(Icon)",
+	    "XXXHDPI": "$(Icon)"
+	  }
+	  },
+	  "iOS": {
+	  "BundleIdentifier": "me.fishg.x",
+	  "DeploymentTarget": "7.0",
+	  "Icons": {
+	    "iPhone_29_2x": "$(Icon)",
+	    "iPhone_29_3x": "$(Icon)",
+	    "iPhone_40_2x": "$(Icon)",
+	    "iPhone_40_3x": "$(Icon)",
+	    "iPhone_60_2x": "$(Icon)",
+	    "iPhone_60_3x": "$(Icon)",
+	    "iPad_29_1x": "$(Icon)",
+	    "iPad_29_2x": "$(Icon)",
+	    "iPad_40_1x": "$(Icon)",
+	    "iPad_40_2x": "$(Icon)",
+	    "iPad_76_1x": "$(Icon)",
+	    "iPad_76_2x": "$(Icon)"
+	  }
+	  }
+}
