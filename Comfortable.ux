@@ -1,12 +1,19 @@
-<App Theme="Native" Background="#FFF">
+<App Theme="NativeWithFallback" Background="#FFF">
     <JavaScript>
         var Observable = require("FuseJS/Observable");
+        var interApp = require("FuseJS/InterApp");
         var initURL = "http://www.baidu.com";
 
         var editURL = Observable(initURL);
         var currentURL = Observable(initURL);
         var history=[initURL];
         var cuttentHistoryIndex = 0 ;
+
+        interApp.onReceivedUri = function(uri) {
+            console.log ("js recieved Uri: " + uri);
+            editURL.value = uri;
+            onGoButton();
+        };
 
         module.exports = {
             editURL        : editURL,
@@ -26,24 +33,32 @@
             },
             onPageLoaded: function(obj) {
                 var url =  JSON.parse(obj.json).url;
-                editURL.value = url;
-                if( history[cuttentHistoryIndex]!=url ){
-                    history.push(url);
-                    cuttentHistoryIndex++;
+                if(/\.(apk)|(zip)$/.test(url)){
+                    interApp.launchUri(uri);
+                    goBack();
+                }else if(url.indexOf("http://")!=0 && url.indexOf("https://")!=0 ){
+                    interApp.launchUri(uri);
+                    goBack();
+                }else{
+                    editURL.value = url;
+                    if( history[cuttentHistoryIndex]!=url ){
+                        history.push(url);
+                        cuttentHistoryIndex++;
+                    }
                 }
             },
             goBack:function(){
                 var index = cuttentHistoryIndex-1;
                 if(index >=0 && history.length >index ){
-                    currentURL.value = history[index];
                     cuttentHistoryIndex = index;
+                    currentURL.value = history[index];
                 }
             },
             goForward:function(){
                 var index = cuttentHistoryIndex+1;
                 if(index >=0 && history.length >index ){
-                    currentURL.value = history[index];
                     cuttentHistoryIndex = index;
+                    currentURL.value = history[index];
                 }
             }
         };
@@ -52,17 +67,22 @@
         <StackPanel Dock="Top">
             <StatusBarBackground/>
             <DockPanel>
-                <TextInput Value="{editURL}" InputHint="URL" IsMultiline="false" Dock="Fill" ActionStyle="Go">
+                <Grid ux:Name="hamburger" RowCount="3" Height="24" Width="20" Alignment="Left" Margin="5" Opacity="1">
+                    <Each Count="3">
+                        <Rectangle Height="3" Fill="#ccc" CornerRadius="2"/>
+                    </Each>
+                </Grid>
+                <TextInput Padding="0,0,0,0" Margin="36,3,5,0" Value="{editURL}" InputHint="URL" IsMultiline="false" Dock="Fill" ActionStyle="Go">
                     <TextInputActionTriggered>
                          <Callback Handler="{onGoButton}" />
                          <ReleaseFocus/>
                     </TextInputActionTriggered>
                 </TextInput>
-                <Panel  DockPanel.Dock="Right" Margin="10" Height="24">
+                <Panel  DockPanel.Dock="Right" Margin="5,0,5,0" Height="24">
                     <Image File="Assets/icon-reload.png" Margin="0">
                         <Clicked>
                             <Reload TargetNode="mainWebView"/>
-                            <Rotate Degrees="360" Duration="0.3"/>
+                            <Rotate DegreesZ="720" Duration="1" DurationBack="0"  Easing="Linear" />
                         </Clicked>
                     </Image>
                     <Circle Layer="Background">
